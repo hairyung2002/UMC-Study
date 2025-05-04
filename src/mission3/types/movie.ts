@@ -20,5 +20,39 @@ export type MovieResponse = {
     total_pages: number,
     results: Movie[].
     total_results: number;
-
 }
+
+type Cast = {
+    "adult": boolean,
+    "gender": number,
+    "id": number,
+    "known_for_department": string,
+    "name": string,
+    "original_name": string,
+    "popularity": number,
+    "profile_path": null,
+    "cast_id": number,
+    "character": string,
+    "credit_id": string,
+    "order": number
+  }
+
+  type Crew = {
+    "adult": boolean,
+    "gender": number,
+    "id": number,
+    "known_for_department": string,
+    "name": string,
+    "original_name": string,
+    "popularity": number,
+    "profile_path": null,
+    "credit_id": string,
+    "department": string,
+    "job": string
+  }
+
+export type MovieCredit = {
+    "id": 765432,
+    "cast": Cast[],
+    "crew": Crew[]
+  }

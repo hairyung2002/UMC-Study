@@ -1,47 +1,54 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { MovieDetail } from '../types/movie';
+import { MovieDetail, MovieCasting, MovieCredit } from '../types/movie';
 import { LoadingSpinner } from '../components/LoadingSpinner';
 
 const BASE_URL = 'https://api.themoviedb.org/3';
 
 const MovieDetailPage = () => {
     const { movieId } = useParams<{ movieId: string }>();
-    const [movie, setMovie] = useState<MovieDetail | null>(null); // ✅ movie 상태 추가
+    const [movie, setMovie] = useState<MovieDetail | null>(null);
+    const [credit, setCredit] = useState<MovieCredit | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [isError, setIsError] = useState(false);
 
     useEffect(() => {
-        const fetchMovie = async () => {
+        const fetchData = async () => {
             setIsPending(true);
-
             try {
-                const res = await axios.get<MovieDetail>(
-                    `${BASE_URL}/movie/${movieId}?language=ko-KR`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`, // ✅ api_key 대신 Bearer 토큰 사용
-                        },
-                    }
-                );
-                setMovie(res.data); // ✅ 불러온 데이터 저장
+                const [movieRes, creditRes] = await Promise.all([
+                    axios.get<MovieDetail>(
+                        `${BASE_URL}/movie/${movieId}?language=en-US`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+                            },
+                        }
+                    ),
+                    axios.get<MovieCredit>(
+                        `${BASE_URL}/movie/${movieId}/credits?language=en-US`,
+                        {
+                            headers: {
+                                Authorization: `Bearer ${import.meta.env.VITE_TMDB_KEY}`,
+                            },
+                        }
+                    )
+                ]);
+                setMovie(movieRes.data);
+                setCredit(creditRes.data);
             } catch {
                 setIsError(true);
             } finally {
-                setIsPending(false); // ✅ 오타 수정 (fasle → false)
+                setIsPending(false);
             }
         };
 
-        fetchMovie();
+        fetchData();
     }, [movieId]);
 
     if (isError) {
-        return (
-            <div>
-                <span className="text-red-500 text-2xl">에러가 발생했습니다.</span>
-            </div>
-        );
+        return <div><span className="text-red-500 text-2xl">에러가 발생했습니다.</span></div>;
     }
 
     if (isPending || !movie) {
@@ -78,6 +85,20 @@ const MovieDetailPage = () => {
                     </div>
                 </div>
             </div>
+
+            {credit && (
+                <div className="mt-8">
+                    <h2 className="text-xl font-semibold mb-2">출연진</h2>
+                    <ul className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {credit.cast.slice(0, 8).map((actor) => (
+                            <li key={actor.cast_id}>
+                                <p>{actor.name}</p>
+                                <p className="text-sm text-gray-400">({actor.character})</p>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            )}
         </div>
     );
 };
