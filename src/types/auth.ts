@@ -27,7 +27,7 @@ export type RequestSigninDto = {
 export type ResponseSigninDto = CommonResponse<{
     id: number;
     name: string;
-    accesToken: string;
+    accessToken: string;
     refreshToken: string;
 }>;
 
