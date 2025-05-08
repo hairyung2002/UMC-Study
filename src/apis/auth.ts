@@ -1,3 +1,5 @@
+import { LOCAL_STORAGE_KEY } from "../constants/key";
+import { useLocalStorage } from "../hooks/useLocalStorage";
 import { RequestSigninDto, RequestSignupDto, ResponseMyinfoDto, ResponseSigninDto, ResponseSignupDto } from "../types/auth";
 import { axiosInstance } from "./axios";
 
@@ -16,6 +18,6 @@ export const postSignin = async (body: RequestSigninDto):Promise<ResponseSigninD
 
 export const getMyInfo = async ():Promise<ResponseMyinfoDto> => {
     const { data } = await axiosInstance.get("/v1/users/me");
-
+  
     return data;
 }

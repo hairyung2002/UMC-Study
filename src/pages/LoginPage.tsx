@@ -2,8 +2,12 @@ import { useState } from "react";
 import useForm from "../hooks/useForm";
 import { UserSigninInformation, validateSignin } from "../utils/validate";
 import { postSignin } from "../apis/auth";
+import { useLocalStorage } from "../hooks/useLocalStorage";
+import { LOCAL_STORAGE_KEY } from "../constants/key";
 
 const LoginPage = () => {
+
+    const {setItem} = useLocalStorage(LOCAL_STORAGE_KEY.accesToken)
 
     const {values, errors, touched, getInputProps} = useForm<UserSigninInformation>({
         initialValue: {
@@ -21,7 +25,7 @@ const LoginPage = () => {
     const handleSubmit = async() => {
         try {
             const response = await postSignin(values);
-            localStorage.setItem("accessToken", response.data.accesToken);
+            setItem(response.data.accesToken);
         } catch(error){
             alert(error?.message);
         }
