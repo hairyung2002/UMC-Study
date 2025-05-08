@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useForm from "../hooks/useForm";
 import { UserSigninInformation, validateSignin } from "../utils/validate";
+import { postSignin } from "../apis/auth";
 
 const LoginPage = () => {
 
@@ -17,7 +18,14 @@ const LoginPage = () => {
         Object.values(values).some((value) => value === "");
 
 
-    const handleSubmit = () => { };
+    const handleSubmit = async() => {
+        try {
+            const response = await postSignin(values);
+            localStorage.setItem("accessToken", response.data.accesToken);
+        } catch(error){
+            alert(error?.message);
+        }
+    };
     return (
         <div className="flex flex-col items-center justify-center h-full gap-4">
             <div className="flex flex-col gap-3">
