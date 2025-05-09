@@ -1,13 +1,14 @@
 import { Outlet } from "react-router-dom";
+import { Navbar } from "../components/Navbar";
 
 const HomeLayout = () => {
     return (
         <div className="h-dvh flex flex-col">
-            <nav>내브바</nav>
-            <main className="flex-1">
+            <Navbar />
+            <main className="flex-1 bg-black">
                 <Outlet />
             </main>
-            <footer>푸터</footer>
+            <footer className="bg-black">푸터</footer>
         </div>
     );
 }

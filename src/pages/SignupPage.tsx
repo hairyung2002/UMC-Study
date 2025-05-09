@@ -1,8 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { data } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { date, z } from "zod"
 import { postSignup } from "../apis/auth";
+import { useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
 
 
 const schema = z.object({
@@ -35,6 +37,15 @@ const schema = z.object({
 type FormFields = z.infer<typeof schema>;
 
 const SignupPage = () => {
+  const {accessToken} = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(()=>{
+      if (accessToken) {
+          navigate('/');
+      }
+  })
+
   const { register, handleSubmit, formState: { errors, isSubmitting }, } = useForm<FormFields>({
     defaultValues: {
       name: "",
@@ -59,7 +70,7 @@ const SignupPage = () => {
       <div className="flex flex-col gap-3">
         <input
           {...register("email")}
-          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm 
+          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm text-white bg-black
                     ${errors?.email ? "border-red-500 bg-red-200" : "border-gray-300"}`}
           type={"email"}
           placeholder={"이메일"}
@@ -69,7 +80,7 @@ const SignupPage = () => {
 
         <input
           {...register("password")}
-          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm 
+          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm text-white bg-black
                     ${errors?.password ? "border-red-500 bg-red-200" : "border-gray-300"}`}
           type={"password"}
           placeholder={"패스워드"}
@@ -79,7 +90,7 @@ const SignupPage = () => {
 
         <input
           {...register("passwordCheck")}
-          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm 
+          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm text-white
                     ${errors?.passwordCheck ? "border-red-500 bg-red-200" : "border-gray-300"}`}
           type={"password"}
           placeholder={"패스워드 확인"}
@@ -89,7 +100,7 @@ const SignupPage = () => {
 
         <input
           {...register("name")}
-          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm 
+          className={`border border-[#ccc] w-[300px] p-[10px] focus:border-[#807bff] rounded-sm text-white
                     ${errors?.name ? "border-red-500 bg-red-200" : "border-gray-300"}`}
           type={"name"}
           placeholder={"이름"}

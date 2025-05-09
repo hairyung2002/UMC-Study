@@ -30,7 +30,7 @@ const MyPage = () => {
     
 
     return (
-        <div>
+        <div className='text-white items-center justify-center min-h-screen flex flex-col'>
             <h1>{data?.data.name}님 환영합니다.</h1>
             <img src={data?.data.avatar as string} alt={"구글로고"}/>
             <h1>{data?.data.email}</h1>
