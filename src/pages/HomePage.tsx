@@ -1,10 +1,11 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import useGetLpList from "../hooks/queries/useGetLpList";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const HomePage = () => {
     const navigate = useNavigate();
-
+    const { accessToken } = useAuth();
     const { search, isSearch } = useState("Live at Fingerprints");
     const { data, isPending, isError } = useGetLpList({
         search,
@@ -27,7 +28,9 @@ const HomePage = () => {
                     <div
                         key={lp.id}
                         className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105"
-                        onClick={() => navigate(`/detail/${lp.id}`)}
+                        onClick={() => accessToken?navigate(`/detail/${lp.id}`):
+                        (alert("로그인이 필요한 서비스입니다. 로그인 후 이용해주세요!"),
+                        navigate(`/detail/${lp.id}`))}
                     >
                         <img
                             src={"/public/images/LP_Image.jpg"}
