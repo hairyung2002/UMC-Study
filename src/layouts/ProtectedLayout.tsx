@@ -1,6 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext"
 import { Navbar } from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const ProtectedLayout = () => {
     const {accessToken} = useAuth();
@@ -14,7 +15,7 @@ const ProtectedLayout = () => {
             <main className="flex-1 bg-black">
                 <Outlet />
             </main>
-            <footer className="bg-black">푸터</footer>
+            <Footer />
         </div>
     );
 };

@@ -29,7 +29,9 @@ export const Navbar = () => {
                         onClick={() => {navigate('/signup')}}>회원가입</button>
                     </> :
                     <>
-                        <button className="px-4 py-2 bg-black text-white rounded">마이페이지</button>
+                        <button className="px-4 py-2 bg-black text-white rounded cursor-pointer hover:bg-gray-800"
+                        onClick={() => {navigate('/serch')}}>검색</button>
+                        <button className="px-4 py-2 bg-black text-white rounded" onClick={()=>{navigate('/my')}}>마이페이지</button>
                         <button className='cursor-pointer bg-blue-300 rounded-sm p-4 hover:scale-90' onClick={handleLogout}>로그아웃</button>
                     </>};
 
