@@ -1,15 +1,35 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import useGetLpList from "../hooks/queries/useGetLpList";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import useGetInfiniteLpList from "../hooks/queries/useGetInfiniteLpList";
+import { PAGINATION_ORDER } from "../enums/common";
+import { useInView } from "react-intersection-observer";
+import LpCard from "../components/LpCard/LpCard";
+import LpCardSkeleton from "../components/LpCard/LpCardSkeleton";
+import LpCardSkeletonList from "../components/LpCard/LpCardSkeletonList";
 
 const HomePage = () => {
     const navigate = useNavigate();
     const { accessToken } = useAuth();
-    const { search, isSearch } = useState("Live at Fingerprints");
-    const { data, isPending, isError } = useGetLpList({
-        search,
+    const [search, setSearch] = useState("");
+    // const { data, isPending, isError } = useGetLpList({
+    //     search,
+    //     limit: 50,
+    // });
+    const { data: lps, isFetching, hasNextPage, isPending, fetchNextPage, isError } = useGetInfiniteLpList(5, search, PAGINATION_ORDER.desc);
+
+    const { ref, inView } = useInView({
+        threshold: 0,
     });
+
+    useEffect(() => {
+        if (inView) {
+            !isFetching && hasNextPage && fetchNextPage();
+        }
+    }, [inView, isFetching, hasNextPage, fetchNextPage]);
+
+    console.log(inView);
 
     if (isPending) {
         return <div className="mt-20">Loading</div>;
@@ -19,32 +39,24 @@ const HomePage = () => {
         return <div className="mt-20">Error</div>
     }
 
-    console.log(data);
+    console.log(lps);
 
     return (
-        <div className="p-4">
-            <div className="grid grid-cols-5 gap-4">
-                {data?.data.data?.map((lp) => (
-                    <div
-                        key={lp.id}
-                        className="relative group cursor-pointer overflow-hidden rounded-lg shadow-md transition-transform transform hover:scale-105"
-                        onClick={() => accessToken?navigate(`/detail/${lp.id}`):
-                        (alert("로그인이 필요한 서비스입니다. 로그인 후 이용해주세요!"),
-                        navigate(`/detail/${lp.id}`))}
-                    >
-                        <img
-                            src={"/public/images/LP_Image.jpg"}
-                            alt={lp.title}
-                            className="w-full h-40 object-cover rounded-lg shadow-md"
-                        />
-                        <div className="absolute inset-0 bg-black bg-opacity-60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-2 text-white">
-                            <div className="text-sm font-semibold truncate">{lp.title}</div>
-                            <div className="text-xs">{lp.createdAt}</div>
-                            <div className="text-xs mt-1">❤️ {lp.likes}</div>
-                        </div>
-                    </div>
-                ))}
+        <div className="container mx-auto px-4 py-6">
+            <input className="bg-amber-50" value={search} onChange={(e) => setSearch(e.target.value)} />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 text-amber-50">
+
+                {isPending && <LpCardSkeletonList count={20}/>}
+
+                {lps?.pages?.map((page) => page.data.data)
+                    ?.flat()
+                    ?.map((lp) => 
+                    <LpCard key={lp.id} lp={lp}/>)}
+
+                {isFetching && <LpCardSkeletonList count={20}/>}
+                
             </div>
+            <div ref={ref} className="h-2"></div>
         </div>
     );
 }

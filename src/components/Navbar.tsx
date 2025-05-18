@@ -2,6 +2,7 @@ import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { LOCAL_STORAGE_KEY } from "../constants/key";
 import { useAuth } from "../context/AuthContext";
+import { Sidebar } from "./SideBar";
 
 export const Navbar = () => {
     const { accessToken } = useAuth();
@@ -16,6 +17,7 @@ export const Navbar = () => {
     return (
         <div className="flex justify-between items-center w-full bg-gray-950">
             <div>
+                <button></button>
                 <button className="px-4 py-2 bg-gray-950 text-pink-500 rounded cursor-pointer hover: whitespace-break-spaces" 
                 onClick={() => {navigate('/')}}>돌려돌려 LP판</button>
             </div>
@@ -40,3 +42,5 @@ export const Navbar = () => {
         </div>
     );
 };
+
+export default Navbar;
