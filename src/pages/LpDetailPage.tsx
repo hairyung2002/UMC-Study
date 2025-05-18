@@ -3,30 +3,50 @@ import useGetLpList from "../hooks/queries/useGetLpList";
 import { useState } from "react";
 import { number } from "zod";
 import { useAuth } from "../context/AuthContext";
+import useGetLpDetail from "../hooks/queries/useGetLpDetail";
+import useGetMyInfo from "../hooks/queries/useGetMyInfo";
+import { Likes } from "../types/lp";
+import { Heart } from "lucide-react"
+import { deleteLike, postLike } from "../apis/lp";
+import usePostLike from "../hooks/mutation/usePostLike";
+import useDeleteLike from "../hooks/mutation/useDeleteLike";
 
 const LpDetailPage = () => {
-    const { Lpid } = useParams<{ Lpid: string }>();
-    const { data, isPending, isError } = useGetLpList({});
+    const { lpId } = useParams();
+    const { accessToken } = useAuth();
+    const { data: lp, isPending, isError } = useGetLpDetail(lpId);
+    const { data: me } = useGetMyInfo(accessToken);
+
+    const { mutate:likeMutate } = usePostLike();
+    const { mutate:dislikeMutate } = useDeleteLike();
+    const isLiked = lp?.data.likes.map((like:Likes) => like.userId).includes(me?.data.id as number);
+
+    const handleLikeLp = () => {
+        likeMutate({lpId:Number(lpId)});
+    };
+
+    const handleDislikeLp = () => {
+        dislikeMutate({lpId:Number(lpId)});
+    };
 
     if (isPending) {
-        <div>Loding...</div>
+        return <div>Loding...</div>;
     };
 
     if (isError) {
-        <div>Error!</div>
+        return <div>Error!</div>;
     }
-
-    const LpDetail = data?.data.data?.find((lp) => String(lp.id) === Lpid);
-    console.log(LpDetail);
 
     return (
         <div className="flex justify-center px-4 py-10">
             <div className="bg-zinc-900 rounded-xl w-full max-w-3xl px-6 py-8 text-white shadow-xl">
                 <div className="flex justify-between items-center mb-4">
+
+                    <div></div>
                     <div>
-                        <div className="text-sm text-zinc-400">{LpDetail?.Id}</div>
-                        <div className="text-2xl font-semibold">{LpDetail?.title}</div>
-                        <div className="text-xs text-zinc-500 mt-1">{LpDetail?.createdAt}</div>
+                        <div className="text-sm text-zinc-400">{lp?.data.id}</div>
+                        <div className="text-2xl font-semibold">{lp?.data.title}</div>
+                        <div className="text-xs text-zinc-500 mt-1">{lp?.data.createdAt}</div>
                     </div>
                     <div className="flex gap-3 text-zinc-400 text-lg">
                         <button className="hover:text-white"><i className="ri-pencil-line"></i></button>
@@ -36,27 +56,26 @@ const LpDetailPage = () => {
 
                 <div className="flex justify-center my-6">
                     <img
-                        src={LpDetail?.thumbnail}
-                        alt={LpDetail?.title}
+                        src={lp?.data.thumbnail}
+                        alt={lp?.data.title}
                         className="w-64 h-64 object-cover rounded-xl shadow-md"
                     />
                 </div>
 
-                <p className="text-sm text-zinc-300 leading-relaxed mb-6">{LpDetail?.content}</p>
+                <p className="text-sm text-zinc-300 leading-relaxed mb-6">{lp?.data.content}</p>
 
                 <div className="flex flex-1 flex-col items-center justify-center">
                     <div className="flex flex-wrap gap-2 mb-6">
-                        {LpDetail?.tags.map((tag, idx) => (
+                        {lp?.data.tags.map((tag, idx) => (
                             <span key={idx} className="bg-zinc-700 px-3 py-1 rounded-full text-xs">
                                 {tag.name}
                             </span>
                         ))}
-                    </div> 
-
-                    <div className="flex items-center text-pink-500 text-sm">
-                        <i className="ri-heart-fill mr-1"></i>
-                        ❤️{LpDetail?.likes.length}
                     </div>
+
+                    <button className="flex items-center text-pink-500 text-sm" onClick={!isLiked?handleLikeLp:handleDislikeLp}>
+                        <Heart color={isLiked?"red":"black"} fill={isLiked?"red":"transparent"}/>
+                    </button>
                 </div>
 
             </div>

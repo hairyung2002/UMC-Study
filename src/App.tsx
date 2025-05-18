@@ -34,7 +34,7 @@ const protectedRoutes: RouteObject[] = [
     errorElement: <NotFoundPage />,
     children: [
       {path: "my", element: <MyPage />},
-      {path: "detail/:Lpid", element: <LpDetailPage />,}
+      {path: "detail/:lpId", element: <LpDetailPage />,}
     ]
   }
 ]
