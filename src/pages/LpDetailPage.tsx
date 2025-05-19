@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { data, useParams } from "react-router-dom";
 import useGetLpList from "../hooks/queries/useGetLpList";
 import { useState } from "react";
 import { number } from "zod";
@@ -14,12 +14,13 @@ import useDeleteLike from "../hooks/mutation/useDeleteLike";
 const LpDetailPage = () => {
     const { lpId } = useParams();
     const { accessToken } = useAuth();
-    const { data: lp, isPending, isError } = useGetLpDetail(lpId);
+    const { data:lp, isPending, isError } = useGetLpDetail(lpId);    
     const { data: me } = useGetMyInfo(accessToken);
 
     const { mutate:likeMutate } = usePostLike();
     const { mutate:dislikeMutate } = useDeleteLike();
-    const isLiked = lp?.data.likes.map((like:Likes) => like.userId).includes(me?.data.id as number);
+    
+    const isLiked = lp?.data.likes.some((like:Likes) => like.userId === me?.data.id as number);
 
     const handleLikeLp = () => {
         likeMutate({lpId:Number(lpId)});
@@ -29,12 +30,8 @@ const LpDetailPage = () => {
         dislikeMutate({lpId:Number(lpId)});
     };
 
-    if (isPending) {
-        return <div>Loding...</div>;
-    };
-
-    if (isError) {
-        return <div>Error!</div>;
+    if(isPending && isError){
+        return <></>
     }
 
     return (
@@ -73,7 +70,7 @@ const LpDetailPage = () => {
                         ))}
                     </div>
 
-                    <button className="flex items-center text-pink-500 text-sm" onClick={!isLiked?handleLikeLp:handleDislikeLp}>
+                    <button className="flex items-center text-pink-500 text-sm" onClick={isLiked?handleDislikeLp:handleLikeLp}>
                         <Heart color={isLiked?"red":"black"} fill={isLiked?"red":"transparent"}/>
                     </button>
                 </div>
