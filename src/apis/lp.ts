@@ -16,6 +16,16 @@ export const getLpDetail = async({lpId,}:RequestLpDto):Promise<ResponseLpDto> =>
     return data;
 }
 
+export const postLp = async(payload:FormData):Promise<ResponseLpDto> => {
+    const { data } = await axiosInstance.post('/v1/lps', payload, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
+    });
+
+    return data;
+};
+
 export const postLike = async({lpId}: RequestLpDto):Promise<ResponseLikeLpDto> => {
     const { data } = await axiosInstance.post(`/v1/lps/${lpId}/likes`);
 

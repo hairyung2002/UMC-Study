@@ -24,6 +24,13 @@ export type Lp = {
     likes: Likes[];
 };
 
+export type AddLpDto = {
+    title: string;
+    content: string;
+    tags: string[];
+    thumbnail: File | null;
+};
+
 export type RequestLpDto = {
     lpId:number;
 }
