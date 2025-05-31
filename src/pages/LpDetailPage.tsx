@@ -73,6 +73,13 @@ const LpDetailPage = () => {
                     <button className="flex items-center text-pink-500 text-sm" onClick={isLiked?handleDislikeLp:handleLikeLp}>
                         <Heart color={isLiked?"red":"black"} fill={isLiked?"red":"transparent"}/>
                     </button>
+                    <span className="text-sm text-zinc-400 ml-2">
+                        {lp?.data.likes.length}명이 좋아합니다.</span>
+                    <button className="absolute top-2 right-2 text-white text-xs rounded px-2 py-1 shadow hover:bg-gray-200"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        openCommentModal(lp?.data.id as number);
+                    }}>댓글...</button>
                 </div>
 
             </div>

@@ -4,7 +4,11 @@ import { LOCAL_STORAGE_KEY } from "../constants/key";
 import { useAuth } from "../context/AuthContext";
 import { Sidebar } from "./SideBar";
 
-export const Navbar = () => {
+interface NavbarProps {
+    onMenuClick: () => void;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
     const { accessToken } = useAuth();
     const navigate = useNavigate();
     const { logout } = useAuth();
@@ -17,9 +21,9 @@ export const Navbar = () => {
     return (
         <div className="flex justify-between items-center w-full bg-gray-950">
             <div>
-                <button></button>
                 <button className="px-4 py-2 bg-gray-950 text-pink-500 rounded cursor-pointer hover: whitespace-break-spaces" 
                 onClick={() => {navigate('/')}}>돌려돌려 LP판</button>
+                <button className="text-white" onClick={onMenuClick}> = </button>
             </div>
 
             <div className="flex gap-2 bg-gray-900">

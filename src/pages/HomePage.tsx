@@ -8,16 +8,19 @@ import { useInView } from "react-intersection-observer";
 import LpCard from "../components/LpCard/LpCard";
 import LpCardSkeleton from "../components/LpCard/LpCardSkeleton";
 import LpCardSkeletonList from "../components/LpCard/LpCardSkeletonList";
+import useDebounce from "../hooks/useDebounce";
+import { SEARCH_DEBOUNCE_DELAY } from "../constants/delay";
 
 const HomePage = () => {
     const navigate = useNavigate();
     const { accessToken } = useAuth();
     const [search, setSearch] = useState("");
+    const debouncedValue = useDebounce(search, SEARCH_DEBOUNCE_DELAY);
     // const { data, isPending, isError } = useGetLpList({
     //     search,
     //     limit: 50,
     // });
-    const { data: lps, isFetching, hasNextPage, isPending, fetchNextPage, isError } = useGetInfiniteLpList(5, search, PAGINATION_ORDER.desc);
+    const { data: lps, isFetching, hasNextPage, isPending, fetchNextPage, isError } = useGetInfiniteLpList(5, debouncedValue, PAGINATION_ORDER.desc);
 
     const { ref, inView } = useInView({
         threshold: 0,

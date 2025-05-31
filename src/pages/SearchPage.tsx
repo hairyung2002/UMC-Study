@@ -4,7 +4,7 @@ import { useState } from "react";
 
 const HomePage = () => {
     const { data, isPending, isError } = useGetLpList({});
-    const {search, setSearch} = useState("타입");
+    const {search, setSearch} = useState("");
 
     console.log(data);
 
